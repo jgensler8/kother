@@ -1,0 +1,24 @@
+{
+  "RecordSet": {
+    "Type": "AWS::Route53::RecordSet",
+    "Properties": {
+      "HostedZoneId": "{{ $HostedZoneID }}",
+      "Name": "{{ $ComponentName }}.{{ $RootDomain }}",
+      "Type": "A",
+      "AliasTarget": {
+        "HostedZoneId": {
+          "Fn::GetAtt": [
+            "LoadBalancer",
+            "CanonicalHostedZoneNameID"
+          ]
+        },
+        "DNSName": {
+          "Fn::GetAtt": [
+            "LoadBalancer",
+            "DNSName"
+          ]
+        }
+      }
+    }
+  }
+}

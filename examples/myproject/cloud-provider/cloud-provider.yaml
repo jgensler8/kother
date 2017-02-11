@@ -1,0 +1,8 @@
+---
+private_key: my_public_key
+tags:
+- key: mycommonID
+  value: mycommonValue
+
+subnets:
+- "subnet-123"

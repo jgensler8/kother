@@ -1,0 +1,66 @@
+{
+  "LoadBalancer": {
+    "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+    "Properties": {
+      "Scheme": "internet-facing",
+      "Subnets": [ "" ],
+      "Listeners": [
+        {
+          "LoadBalancerPort": "22",
+          "InstancePort": "22",
+          "Protocol": "TCP"
+        },
+        {
+          "LoadBalancerPort": "32000",
+          "InstancePort": "32000",
+          "Protocol": "TCP"
+        },
+        {
+          "LoadBalancerPort": "443",
+          "InstancePort": "443",
+          "Protocol": "TCP"
+        },
+        {
+          "LoadBalancerPort": "8472",
+          "InstancePort": "8472",
+          "Protocol": "TCP"
+        }
+      ],
+      "SecurityGroups": [
+        {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${InfrastructureStackName}-SecurityGroup"
+          }
+        }
+      ],
+      "Tags": [
+        {
+          "Key": "KubernetesCluster",
+          "Value": "preprod"
+        },
+        {
+          "Key": "Name",
+          "Value": {
+            "Fn::Sub": "${AWS::StackName}-controller"
+          }
+        },
+        {
+          "Key": "business_unit",
+          "Value": "ghs"
+        },
+        {
+          "Key": "product_line",
+          "Value": "alm"
+        },
+        {
+          "Key": "environment",
+          "Value": "dev"
+        },
+        {
+          "Key": "owner",
+          "Value": "genslerj"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "LaunchConfiguration": {
+    "Properties": {
+      "ImageId": {
+        "Fn::ImportValue": {
+          "Fn::Sub": "${EtcdStackName}-AMI"
+        }
+      },
+      "BlockDeviceMappings": [
+        {
+          "DeviceName": "/dev/xvda",
+          "Ebs": {
+            "VolumeSize": "20",
+            "VolumeType": "gp2"
+          }
+        }
+      ],
+      "InstanceType": {
+        "Ref": "InstanceType"
+      },
+      "SecurityGroups": [{{ range $SecurityGroups }}
+
+        {{end}}],
+      "IamInstanceProfile": {
+        "Ref": "IAMInstanceProfile"
+      },
+      "KeyName": {
+        "Fn::ImportValue": {
+          "Fn::Sub": "${EtcdStackName}-KeyPair"
+        }
+      },
+      "UserData": "{{ $userdata | gzip | b64enc }}"
+    },
+    "Type": "AWS::AutoScaling::LaunchConfiguration"
+  }
+}
