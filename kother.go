@@ -1,11 +1,20 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform/builtin/providers/ignition"
-	"k8s.io/client-go/kubernetes"
+	//cf "github.com/jgensler8/kother/pkg/cloudformation"
+	//"github.com/aws/aws-sdk-go/aws/session"
+	//"github.com/aws/aws-sdk-go/service/cloudformation"
 )
 
 func main() {
+
+	//sess, err := session.NewSession()
+	//if err != nil {
+	//	return
+	//}
+	//svc := cloudformation.New(sess)
+	//stack := cf.DefaultCloudFormation()
+	//cf.CreateOrUpdate(svc, stack)
 /*
 	template = cloudformation.basic()
 

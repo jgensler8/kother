@@ -6,6 +6,7 @@ A version control and CI/CD focused Kubernetes cluster manager.
 
 * Provide a one click way of getting a Kubernetes cluster into your CI/CD pipeline.
 * Value Simplicity over Efficiency
+* One Cluster Per VPC Per Region (multiple vpcs in one region == multiple clusters)
 
 ## Notes
 
