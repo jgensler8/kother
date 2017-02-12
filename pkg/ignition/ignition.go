@@ -5,9 +5,10 @@ import (
 	"github.com/jgensler8/kother/pkg/ignition/files"
 	"github.com/coreos/ignition/config/types"
 	"github.com/coreos/go-systemd/unit"
+	"k8s.io/client-go/pkg/api/v1"
 )
 
-func DefaultIgnition(k units.KubeletUnit, p files.Pod) (_ *types.Config, err error) {
+func DefaultIgnition(k units.KubeletUnit, p v1.Pod) (_ *types.Config, err error) {
 	ku, err := DefaultKubeletUnit(k)
 	if err != nil {
 		return nil, err

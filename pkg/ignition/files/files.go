@@ -2,19 +2,16 @@ package files
 
 import (
 	"path"
-	"github.com/coreos/ignition/config/types"
 	"net/url"
+	"github.com/coreos/ignition/config/types"
+	"k8s.io/client-go/pkg/api/v1"
 )
-
-type Pod struct {
-	Name string
-}
 
 var (
 	BasePath string = "/usr/share/oem"
 )
 
-func ManifestToFile(p Pod) (_ *types.File, err error) {
+func ManifestToFile(p v1.Pod) (_ *types.File, err error) {
 	u, err := url.Parse("data:text/plain;base64,b64filecontentswouldgohere")
 	if err != nil {
 		return nil, err
