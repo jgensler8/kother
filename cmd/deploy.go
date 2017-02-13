@@ -1,11 +1,32 @@
 package cmd
 
-import "github.com/urfave/cli"
+import (
+	"github.com/urfave/cli"
+	"fmt"
+	"github.com/jgensler8/kother/pkg/vagrantfile"
+)
 
-func Deploy(c *cli.Context) (err error) {
-	err = Validate(c)
+func DeployAWS(c *cli.Context) (err error) {
+	s, err := Validate(c)
 	if (err != nil) {
 		return err
 	}
+	fmt.Printf("%v", s.Pods)
+	fmt.Printf("%v", c.GlobalString("commit-hash"))
+	return nil
+}
+
+func DeployVagrantfile(c *cli.Context) (err error) {
+	s, err := Validate(c)
+	if (err != nil) {
+		return err
+	}
+	v, err := vagrantfile.SpecToVagrantfile(s)
+	if err != nil {
+		fmt.Printf("Couldn't turn Spec into Vagrantfile")
+		return
+	}
+	fmt.Printf("%v: %v", s.Pods, v)
+
 	return nil
 }

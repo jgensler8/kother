@@ -10,15 +10,18 @@ A version control and CI/CD focused Kubernetes cluster manager.
 
 ## Notes
 
-A File is one of two types:
-  * Variable File
-  * Template File
+There is one file for variables (`cluster.yaml`).
 
-The only variable files are:
+All files in the `cloud-provider` and `kubernetes` directory will be run through a templating engine before being UnMarshalled. These variables can be consumed in this process.
 
-* cluster.yaml
-* cloud-provider.yaml
-* domains.yaml
+There are some extra variables that will be provided to the templating engine:
+
+* context.commithash
+* context.committag
+* dns.apiserver
+* dns.etcdserver
+* cidr.pod
+* cidr.cluster
 
 ## Opinion Table
 
@@ -65,5 +68,8 @@ kother dump
 
 ### Future Work
 
+* Use Godep, then switch to glog to logging
 * Service to tell you when to update stuff. Branch, commit, and stand up environment.
+* Subcommand for Generating a (large) Vagrantfile
+* Provide logic to pull ENV vars from particular CI systems (Bamboo, Jenkins, Travis, etc)
 * Bake each component into an AMI

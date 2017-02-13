@@ -7,7 +7,7 @@ spec:
   hostNetwork: true
   containers:
   - name: vault
-    image: {{ $VaultImage }}:{{ $VaultTag }}
+    image: {{ .VaultImage }}:{{ .VaultTag }}
     command:
     livenessProbe:
       httpGet:
