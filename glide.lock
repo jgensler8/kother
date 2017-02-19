@@ -1,5 +1,5 @@
-hash: eaa528e2bf33dd9bc502742f4ed4d3be266cbfc773a3148ffffb5802b67fc55a
-updated: 2017-02-18T14:19:02.705095639-08:00
+hash: 3bbd0ff677320511c0cee7a96334ebde5c0a576b3eb8eb89ed2a8e1b8d0a314b
+updated: 2017-02-18T19:58:31.897229937-08:00
 imports:
 - name: github.com/aokoli/goutils
   version: 9c37978a95bd5c709a15883b6242714ea6709e64
@@ -28,6 +28,10 @@ imports:
   - service/route53
 - name: github.com/BurntSushi/toml
   version: 99064174e013895bbd9b025c31100bd1d9b590ca
+- name: github.com/coreos/coreos-cloudinit
+  version: 5be99bf577f2768193c7fb587ef5a8806c1503cf
+  subpackages:
+  - config
 - name: github.com/coreos/go-semver
   version: 5e3acbb5668c4c3deb4842615c4098eb61fb6b1e
   subpackages:
@@ -41,6 +45,8 @@ imports:
   subpackages:
   - config/types
   - config/validate/report
+- name: github.com/coreos/yaml
+  version: 6b16a5714269b2f70720a45406b1babd947a17ef
 - name: github.com/davecgh/go-spew
   version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
   subpackages:

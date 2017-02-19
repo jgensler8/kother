@@ -8,14 +8,12 @@ import (
 	"github.com/jgensler8/kother/pkg/spec"
 	"github.com/Masterminds/sprig"
 	"github.com/jgensler8/kother/pkg/vagrantfile/nginx"
-	"github.com/jgensler8/kother/pkg/ignition"
-	"k8s.io/client-go/pkg/util/json"
+	"github.com/jgensler8/kother/pkg/configurationsystem"
 )
 
 type Vagrantfile struct {
 	Contents *string
 }
-
 
 func SpecToVagrantfile(s *spec.Spec) (v *Vagrantfile, err error){
 	t, err := template.New("vagrantfile_template").
@@ -74,9 +72,9 @@ func ComponentBlock(c *spec.Component, s *spec.Spec) (_ string, err error) {
 	t, err := template.New("vagrantfile_component_template").
 		Funcs(sprig.TxtFuncMap()).
 		Funcs(template.FuncMap{
-		"getUserData": GetUserData,
-		"getPod": nginx.GetPod,
-	}).
+			"getUserData": configurationsystem.GetUserData,
+			"getPod": nginx.GetPod,
+		}).
 		Parse(vagrantfile_component_template)
 	if err != nil {
 		log.Printf("Couldn't create the Component template")
@@ -96,16 +94,6 @@ func ComponentBlock(c *spec.Component, s *spec.Spec) (_ string, err error) {
 		return "", err
 	}
 	return doc.String(), nil
-}
-
-func GetUserData(c *spec.Component, s *spec.Spec) (_ string, err error) {
-	q , err := ignition.DefaultIgnition(c, s)
-	if err != nil {
-		fmt.Printf("Couldn't create Default Ignition template")
-		return "", err
-	}
-	b, err := json.Marshal(q)
-	return string(b), nil
 }
 
 func GetPortString(c *spec.Component) (s string) {

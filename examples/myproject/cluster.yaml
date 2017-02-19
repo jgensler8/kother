@@ -12,6 +12,14 @@ Etcd:
 Vault:
   Iamge: vault
   Tag:   latest
+  Replicas: 1
+
+APIServer:
+  Replicas: 1
+ControllerManager:
+  Replicas: 1
+Scheduler:
+  Replicas: 1
 
 Config:
   CIDR:

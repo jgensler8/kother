@@ -40,3 +40,5 @@ import:
   - ssh/terminal
 - package: github.com/Masterminds/sprig
   version: 2.8.0
+- package: github.com/coreos/coreos-cloudinit
+  version: v1.13.0

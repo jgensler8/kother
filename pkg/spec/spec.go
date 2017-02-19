@@ -13,12 +13,20 @@ type Spec struct {
 	Vault `json:"Vault,omitempty"`
 	Config Config `json:"Config,omitempty"`
 	ExtraVars interface{} `json:"ExtraVars,omitempty"`
+	Context CLIContext `json:Context,omitempty`
 }
 
 type Config struct {
 	CIDR `json:"CIDR,omitempty"`
 	DNS `json:"DNS,omitempty"`
 	Tags []Tag `json:"Tags,omitempty"`
+}
+
+type CLIContext struct {
+	WorkDir string `json:"WorkDir,omitempty"`
+	CommitHash string `json:"CommitHash,omitempty"`
+	CommitTag string `json:"CommitTag,omitempty"`
+	ConfigurationSystem string `json:"ConfigurationSystem,omitempty"`
 }
 
 type CIDR struct {

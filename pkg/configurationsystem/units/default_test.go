@@ -2,7 +2,7 @@ package units_test
 
 import (
 	"testing"
-	"github.com/jgensler8/kother/pkg/ignition/units"
+	"github.com/jgensler8/kother/pkg/configurationsystem/units"
 	"io/ioutil"
 	"strings"
 	"k8s.io/client-go/pkg/api/v1"
@@ -83,7 +83,7 @@ func TestDefaultUnit_Serialize(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	if strings.Count(string(doc), "\n") != 23 {
+	if strings.Count(string(doc), "\n") != 11 {
 		t.Logf("Lines: %d", strings.Count(string(doc), "\n"))
 		t.Logf("%v", string(doc))
 		t.Fail()

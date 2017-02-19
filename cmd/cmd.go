@@ -15,6 +15,7 @@ var (
 	flagPrint = "print"
 	flagSave = "save"
 	flagTags = "tags"
+	flagConfigurationSystem = "configuration-system"
 )
 
 func GetApp() (* cli.App){
@@ -96,6 +97,11 @@ func GetApp() (* cli.App){
 					Name:  flagTags,
 					Usage: "Comma Separated set of Tags to attach to all AWS Resources.",
 					Value: "",
+				},
+				cli.StringFlag{
+					Name:  flagConfigurationSystem,
+					Usage: "What configuration system to use with CoreOS (ignition or cloud-config)",
+					Value: "cloud-config",
 				},
 			},
 		},

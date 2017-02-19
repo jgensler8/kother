@@ -18,5 +18,6 @@ func DefaultUnit(s *spec.Spec) (UnitFile) {
 		AddUnitOption(unit.NewUnitOption("Service", "Restart", "always")).
 		AddUnitOption(unit.NewUnitOption("Service", "RestartSec", "1")).
 		AddUnitOption(unit.NewUnitOption("Install", "WantedBy", "multi-user.target")).
+		AddUnitOption(unit.NewUnitOption("Unit", "After", "docker.service")).
 		Build()
 }

@@ -5,6 +5,7 @@ import (
 	"k8s.io/client-go/pkg/api/v1"
 	"testing"
 	"github.com/jgensler8/kother/pkg/vagrantfile"
+	"github.com/jgensler8/kother/pkg/configurationsystem"
 )
 
 var (
@@ -29,6 +30,9 @@ var (
 		},
 	}
 	Spec = spec.Spec{
+		Context: spec.CLIContext{
+			ConfigurationSystem: configurationsystem.ConfigurationSystem_CloudConfig,
+		},
 		Config: spec.Config{
 			DNS: spec.DNS{
 				RootDomain: "vagrant.local",
@@ -68,10 +72,10 @@ var (
 )
 
 func TestVagrant(t *testing.T) {
-	v, err := vagrantfile.SpecToVagrantfile(&Spec)
+	_, err := vagrantfile.SpecToVagrantfile(&Spec)
 	if err != nil {
 		t.Logf("%v", err)
 		t.Fail()
 	}
-	t.Logf("%v", *v.Contents)
+	//t.Logf("%v", *v.Contents)
 }

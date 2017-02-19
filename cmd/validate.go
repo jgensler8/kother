@@ -7,7 +7,12 @@ import (
 )
 
 func Validate(c *cli.Context) (s *spec.Spec, err error) {
-	wd := c.GlobalString(flagWorkDir)
-	s, err = validate.Validate(&wd)
+	cc := spec.CLIContext{
+		WorkDir: c.GlobalString(flagWorkDir),
+		CommitHash: c.GlobalString(flagCommitHash),
+		CommitTag: c.GlobalString(flagCommitTag),
+		ConfigurationSystem: c.GlobalString(flagConfigurationSystem),
+	}
+	s, err = validate.Validate(&cc)
 	return
 }

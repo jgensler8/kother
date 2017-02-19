@@ -30,14 +30,14 @@ var (
 		path.Join(DefaultManfiestDirectory, DefaultVaultYAMLFile)}
 )
 
-func Validate(wd *string) (s *spec.Spec, err error) {
-	err = Existence(wd)
+func Validate(cc *spec.CLIContext) (s *spec.Spec, err error) {
+	err = Existence(cc)
 	if err != nil{
 		fmt.Printf("Some Resources don't exist.")
 		return nil, err
 	}
 
-	s, err = Correctness(wd)
+	s, err = Correctness(cc)
 	if err != nil {
 		fmt.Printf("All Resources exist but are invlaid.")
 		return nil, err
@@ -46,15 +46,15 @@ func Validate(wd *string) (s *spec.Spec, err error) {
 	return
 }
 
-func Existence(wd *string) (err error){
-	p := path.Join(*wd, DefaultVariableFile)
+func Existence(cc *spec.CLIContext) (err error){
+	p := path.Join(cc.WorkDir, DefaultVariableFile)
 	err = ensureVariableFileExists(&p)
 	if err != nil {
 		fmt.Printf("Default Variable File doesn't exist (%v)\n", p)
 		return
 	}
 	for _, d := range DefaultDirectories {
-		p := path.Join(*wd, d)
+		p := path.Join(cc.WorkDir, d)
 		err = ensureDirectoryExists(&p)
 		if err != nil {
 			fmt.Printf("Directory doesn't exists (%v)\n", p)
@@ -62,7 +62,7 @@ func Existence(wd *string) (err error){
 		}
 	}
 	for _, f := range DefaultManifestFiles {
-		p := path.Join(*wd, f)
+		p := path.Join(cc.WorkDir, f)
 		err = ensureYAMLFileExists(&p)
 		if err != nil {
 			fmt.Printf("Manifest File doesn't exist (%v)\n", p)
@@ -72,14 +72,16 @@ func Existence(wd *string) (err error){
 	return nil
 }
 
-func Correctness(wd *string) (_ *spec.Spec, err error) {
-	v, err := ioutil.ReadFile(path.Join(*wd, DefaultVariableFile))
+func Correctness(cc *spec.CLIContext) (_ *spec.Spec, err error) {
+	v, err := ioutil.ReadFile(path.Join(cc.WorkDir, DefaultVariableFile))
 	if err != nil {
 		fmt.Printf("Couldn't read the default vars file located at (%s)\n", v)
 		return nil, err
 	}
 
-	s := spec.Spec{}
+	s := spec.Spec{
+		Context: spec.CLIContext(*cc),
+	}
 	err = yaml.Unmarshal(v, &s)
 	if err != nil {
 		fmt.Printf("Couldn't unmarshal cluster.yaml to struct ()\n")
@@ -90,7 +92,7 @@ func Correctness(wd *string) (_ *spec.Spec, err error) {
 	for _, f := range DefaultManifestFiles {
 		// Read
 		p := v1.Pod{}
-		v, err := ioutil.ReadFile(path.Join(*wd, f))
+		v, err := ioutil.ReadFile(path.Join(s.Context.WorkDir, f))
 		if err != nil {
 			fmt.Printf("Couldn't the pod manifest located at (%s)\n", v)
 			return nil, err
@@ -99,7 +101,7 @@ func Correctness(wd *string) (_ *spec.Spec, err error) {
 		// Template
 		tmpl, err := template.New("Test").Parse(string(v))
 		if err != nil {
-			fmt.Printf("Couldn't create template from file (%f)\n", path.Join(*wd, f))
+			fmt.Printf("Couldn't create template from file (%f)\n", path.Join(s.Context.WorkDir, f))
 			fmt.Printf("%v", v)
 			return nil, err
 		}

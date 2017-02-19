@@ -3,7 +3,7 @@ package units_test
 import (
 	"testing"
 	"github.com/coreos/go-systemd/unit"
-	"github.com/jgensler8/kother/pkg/ignition/units"
+	"github.com/jgensler8/kother/pkg/configurationsystem/units"
 	"io/ioutil"
 	"strings"
 )

@@ -4,7 +4,7 @@ var vagrantfile_template string =`{{ $root := . }}
 Vagrant.configure("2") do |config|
   config.vm.box = "coreos-stable"
   config.vm.box_check_update = false
-  config.vm.network "private_network", type: "dhcp"
+  config.vm.network "public_network", type: "dhcp"
   config.landrush.enabled = true
   config.landrush.tld = '{{ .Config.DNS.RootDomain }}'
 
@@ -42,7 +42,7 @@ var vagrantfile_component_template = `{{ $root := . }}{{ $pod := getPod $root.Co
 (1..{{ $root.Component.Replicas }}).each do |i|
 	config.vm.define "{{ $pod.Name }}-%d" % i do |target|
 	    target.vm.hostname = "{{ $pod.Name }}-%d.{{ $root.Spec.Config.DNS.RootDomain }}" % i
-	    target.vm.provision "shell", inline: "echo '{{ (getUserData $root.Component $root.Spec) | b64enc }}' | base64 -d -w 0 > /usr/share/oem/ignition.json"
+	    target.vm.provision "shell", inline: "echo '{{ (getUserData $root.Component $root.Spec) | b64enc }}' | base64 -d -w 0 > /var/lib/coreos-vagrant/vagrantfile-user-data"
 	    target.vm.provider "virtualbox" do |v|
 		v.memory = 512
 		v.cpus = 1
