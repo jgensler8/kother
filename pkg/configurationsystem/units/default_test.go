@@ -71,7 +71,7 @@ var (
 
 func TestDefaultUnit(t *testing.T) {
 	u := units.DefaultUnit(&Spec)
-	if len(u.Lines) != 8 {
+	if len(u.Lines) != 9 {
 		t.Fail()
 	}
 }
@@ -83,7 +83,7 @@ func TestDefaultUnit_Serialize(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	if strings.Count(string(doc), "\n") != 11 {
+	if strings.Count(string(doc), "\n") != 14 {
 		t.Logf("Lines: %d", strings.Count(string(doc), "\n"))
 		t.Logf("%v", string(doc))
 		t.Fail()

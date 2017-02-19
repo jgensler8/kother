@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	BasePath string = "/etc/kubernetes/pods"
+	BasePath string = "/var/lib/kubelet/pods"
 )
 
 func ManifestToFile(c *spec.Component) (_ *types.File, err error) {
