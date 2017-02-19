@@ -15,10 +15,10 @@ import (
 
 var (
 	DefaultManfiestDirectory = "cloud-provider/manifests"
-	DefaultAPIServerYAMLFile = "api-server.yaml"
-	DefaultControllerManagerYAMLFile = "controller-manager.yaml"
+	DefaultAPIServerYAMLFile = "kube-apiserver.yaml"
+	DefaultControllerManagerYAMLFile = "kube-controller-manager.yaml"
 	DefaultEtcdYAMLFile = "etcd.yaml"
-	DefaultSchedulerYAMLFile = "scheduler.yaml"
+	DefaultSchedulerYAMLFile = "kube-scheduler.yaml"
 	DefaultVaultYAMLFile = "vault.yaml"
 	DefaultVariableFile = "cluster.yaml"
 	DefaultDirectories = []string{DefaultManfiestDirectory}
@@ -73,26 +73,19 @@ func Existence(wd *string) (err error){
 }
 
 func Correctness(wd *string) (_ *spec.Spec, err error) {
-	pods := []*v1.Pod{}
-
 	v, err := ioutil.ReadFile(path.Join(*wd, DefaultVariableFile))
 	if err != nil {
 		fmt.Printf("Couldn't read the default vars file located at (%s)\n", v)
 		return nil, err
 	}
 
-	// TODO: make some standard for extra variables
-	vars := make(map[string]string)
-	err = yaml.Unmarshal(v, &vars)
-
-	vars = AddDefaultVars(vars)
-
-	var c spec.Config
-	err = json.Unmarshal(v, &c)
+	s := spec.Spec{}
+	err = yaml.Unmarshal(v, &s)
 	if err != nil {
-		fmt.Printf("Couldn't unmarshal config to spec struct\n")
-		return nil, err
+		fmt.Printf("Couldn't unmarshal cluster.yaml to struct ()\n")
 	}
+
+	AddDefaultVars(&s)
 
 	for _, f := range DefaultManifestFiles {
 		// Read
@@ -111,7 +104,7 @@ func Correctness(wd *string) (_ *spec.Spec, err error) {
 			return nil, err
 		}
 		var podTmpl bytes.Buffer
-		err = tmpl.Execute(&podTmpl, v)
+		err = tmpl.Execute(&podTmpl, &s)
 		if err != nil {
 			fmt.Printf("Couldn't execute template (%v)\n", podTmpl.String())
 			return nil, err
@@ -132,20 +125,31 @@ func Correctness(wd *string) (_ *spec.Spec, err error) {
 			fmt.Printf("%v\n", podTmpl.String())
 			return nil, err
 		}
-		pods = append(pods, &p)
+
+		addPod(&s, &p)
 	}
 
-	s := spec.Spec{
-		Pods: pods,
-		Config: c,
-		ExtraVars: vars,
-	}
 	return &s, nil
 }
 
-func AddDefaultVars(i map[string]string) (_ map[string]string){
-	i["EtcdDNS"] = "qwer"
-	return i
+func AddDefaultReplicas(c *spec.Component) () {
+	if c.Replicas == 0 {
+		c.Replicas = 3
+	}
+}
+
+func AddDefaultVars(s *spec.Spec) (_ *spec.Spec){
+	AddDefaultReplicas(&s.Etcd.Component)
+	AddDefaultReplicas(&s.Vault.Component)
+	AddDefaultReplicas(&s.APIServer.Component)
+	AddDefaultReplicas(&s.ControllerManager.Component)
+	AddDefaultReplicas(&s.Scheduler.Component)
+	s.Config.DNS.EtcdDNS = fmt.Sprintf("etcd.%s", s.Config.DNS.RootDomain)
+	s.Config.DNS.VaultDNS = fmt.Sprintf("vault.%s", s.Config.DNS.RootDomain)
+	s.Config.DNS.APIServerDNS = fmt.Sprintf("apiserver.%s", s.Config.DNS.RootDomain)
+	s.Config.DNS.ControllerManagerDNS = fmt.Sprintf("controller-manager.%s", s.Config.DNS.RootDomain)
+	s.Config.DNS.SchedulerDNS = fmt.Sprintf("scheduler.%s", s.Config.DNS.RootDomain)
+	return s
 }
 
 func ensureVariableFileExists(f *string) (err error) {
@@ -170,4 +174,35 @@ func ensureDirectoryExists(d *string) (err error) {
 		return err
 	}
 	return nil
+}
+
+func addPod(s *spec.Spec, p *v1.Pod) (err error){
+	switch p.Name {
+	case "etcd":
+		s.Etcd.Pod = p
+	case "vault":
+		s.Vault.Pod = p
+	case "kube-apiserver":
+		s.APIServer.Pod = p
+		defaultHyperkubeComponent(s.APIServer.Component, &s.Hyperkube)
+	case "kube-controller-manager":
+		s.ControllerManager.Pod = p
+		defaultHyperkubeComponent(s.ControllerManager.Component, &s.Hyperkube)
+	case "kube-scheduler":
+		s.Scheduler.Pod = p
+		defaultHyperkubeComponent(s.Scheduler.Component, &s.Hyperkube)
+	default:
+		return fmt.Errorf("Unknown component in manifest directory")
+	}
+	return nil
+}
+
+func defaultHyperkubeComponent(c interface{}, h *spec.Hyperkube) {
+	s := c.(spec.Component)
+	if s.Image.Name == "" {
+		s.Image.Tag = h.Image.Tag
+	}
+	if s.Image.Tag == "" {
+		s.Image.Tag = h.Image.Tag
+	}
 }

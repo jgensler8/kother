@@ -1,25 +1,23 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kube-scheduler
-  namespace: kube-system
+  name: etcd
 spec:
   hostNetwork: true
   containers:
-  - name: kube-scheduler
-    image: {{ .EtcdImage }}:{{ .EtcdTag }}
-    command:
-    - /hyperkube
-    - scheduler
-    - --master=https://{{ .APIServerDNS }}:443
-    - --leader-elect=true
+  - name: etcd
+    image: {{ .Etcd.Name }}:{{ .Etcd.Tag }}
     resources:
       requests:
         cpu: 100m
+    ports:
+    - containerPort: 2379
+      hostPort: 2379
+      name: client
     livenessProbe:
       httpGet:
         host: 127.0.0.1
         path: /healthz
-        port: 10251
-      initialDelaySeconds: 15
-      timeoutSeconds: 15
+        port: 2379
+      initialDelaySeconds: 5
+      timeoutSeconds: 60

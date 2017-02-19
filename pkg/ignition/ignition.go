@@ -5,11 +5,11 @@ import (
 	"github.com/jgensler8/kother/pkg/ignition/files"
 	"github.com/coreos/ignition/config/types"
 	"github.com/coreos/go-systemd/unit"
-	"k8s.io/client-go/pkg/api/v1"
+	"github.com/jgensler8/kother/pkg/spec"
 )
 
-func DefaultIgnition(k units.KubeletUnit, p v1.Pod) (_ *types.Config, err error) {
-	ku, err := DefaultKubeletUnit(k)
+func DefaultIgnition(c *spec.Component, s *spec.Spec) (_ *types.Config, err error) {
+	ku, err := DefaultKubeletUnit(s)
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +17,7 @@ func DefaultIgnition(k units.KubeletUnit, p v1.Pod) (_ *types.Config, err error)
 	if err != nil {
 		return nil, err
 	}
-	fi, err := files.ManifestToFile(p)
+	fi, err := files.ManifestToFile(c)
 	if err != nil {
 		return nil, err
 	}
@@ -39,13 +39,13 @@ func DefaultIgnition(k units.KubeletUnit, p v1.Pod) (_ *types.Config, err error)
 	}, err
 }
 
-func DefaultKubeletUnit(k units.KubeletUnit) (*types.SystemdUnit, error){
-	u := units.DefaultUnit(k)
-	s, err := u.String()
+func DefaultKubeletUnit(s *spec.Spec) (*types.SystemdUnit, error){
+	u := units.DefaultUnit(s)
+	us, err := u.String()
 	return &types.SystemdUnit{
-		Name: types.SystemdUnitName(k.Name),
+		Name: types.SystemdUnitName("kubelet.service"),
 		Enable: true,
-		Contents: s,
+		Contents: us,
 	}, err
 }
 
@@ -53,9 +53,10 @@ func DefaultDockerDropIn() (*types.SystemdUnit, error){
 	u := units.UnitFileBuilder.AddUnitOption(unit.NewUnitOption("Service", "Environment", "DOCKER_OPTS=\"${DOCKER_OPTS} --log-opt log-limit=50m\"")).Build()
 	s, err := u.String()
 	return &types.SystemdUnit{
+		Name: "docker.service",
 		DropIns: []types.SystemdUnitDropIn{
 			types.SystemdUnitDropIn{
-				Name: "docker.service",
+				Name: "docker-10.conf",
 				Contents: s,
 			},
 		},

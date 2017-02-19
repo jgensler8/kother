@@ -1,10 +1,10 @@
-package ignition_test
+package vagrantfile_test
 
 import (
-	"testing"
-	"github.com/jgensler8/kother/pkg/ignition"
-	"k8s.io/client-go/pkg/api/v1"
 	"github.com/jgensler8/kother/pkg/spec"
+	"k8s.io/client-go/pkg/api/v1"
+	"testing"
+	"github.com/jgensler8/kother/pkg/vagrantfile"
 )
 
 var (
@@ -29,21 +29,9 @@ var (
 		},
 	}
 	Spec = spec.Spec{
-		Hyperkube: spec.Hyperkube{
-			Component: spec.Component{
-				Image: spec.Image{
-					Name: "quay.io/coreos/hyperkube",
-					Tag: "latest",
-				},
-			},
-		},
 		Config: spec.Config{
 			DNS: spec.DNS{
 				RootDomain: "vagrant.local",
-				APIServerDNS: "apiserver.vagrant.local",
-			},
-			CIDR: spec.CIDR{
-				Cluster: "1.2.3.4/20",
 			},
 		},
 		Etcd: spec.Etcd{
@@ -79,10 +67,11 @@ var (
 	}
 )
 
-func TestDefaultIgnition(t *testing.T) {
-	_, err := ignition.DefaultIgnition(&Spec.APIServer.Component, &Spec)
+func TestVagrant(t *testing.T) {
+	v, err := vagrantfile.SpecToVagrantfile(&Spec)
 	if err != nil {
-		t.Fatalf("%v", err)
+		t.Logf("%v", err)
+		t.Fail()
 	}
-	//t.Logf("%v", x)
+	t.Logf("%v", *v.Contents)
 }

@@ -16,12 +16,15 @@ All files in the `cloud-provider` and `kubernetes` directory will be run through
 
 There are some extra variables that will be provided to the templating engine:
 
-* context.commithash
-* context.committag
-* dns.apiserver
-* dns.etcdserver
-* cidr.pod
-* cidr.cluster
+* Config.DNS.etcd
+* Config.DNS.apiserver
+* Config.DNS.controller-manager
+* Config.DNS.scheduler
+
+TODO:
+
+* Context.commithash
+* Context.committag
 
 ## Opinion Table
 
@@ -63,6 +66,22 @@ kother dump
 ## Project Structure
 
 ```bash
+examples
+└── myproject
+    ├── cloud-provider
+    │   └── manifests
+    │       ├── etcd.yaml
+    │       ├── kube-apiserver.yaml
+    │       ├── kube-controller-manager.yaml
+    │       ├── kube-scheduler.yaml
+    │       └── vault.yaml
+    ├── cluster.yaml
+    └── kubernetes
+        ├── dns
+        │   ├── dns-deployment.yaml
+        │   └── dns-svc.yaml
+        └── proxy
+            └── proxy.yaml
 
 ```
 
@@ -73,3 +92,4 @@ kother dump
 * Subcommand for Generating a (large) Vagrantfile
 * Provide logic to pull ENV vars from particular CI systems (Bamboo, Jenkins, Travis, etc)
 * Bake each component into an AMI
+* Chang Cloud Config back to Ignition ([not working at the time of this article](https://github.com/coreos/ignition/blob/95f018b7cdfb45386cb6f5c99facc0b8a888f343/internal/oem/oem.go#L174-L177))

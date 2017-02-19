@@ -7,15 +7,19 @@ spec:
   hostNetwork: true
   containers:
   - name: kube-scheduler
-    image: {{ .HyperkubeImage }}:{{ .HyperkubeTag }}
+    image: {{ .Hyperkube.Name }}:{{ .Hyperkube.Tag }}
     command:
     - /hyperkube
     - scheduler
-    - --master=https://{{ .APIServerDNS }}:443
+    - --master=https://{{ .Config.DNS.APIServerDNS }}:443
     - --leader-elect=true
     resources:
       requests:
         cpu: 100m
+    ports:
+    - containerPort: 10251
+      hostPort: 10251
+      name: https
     livenessProbe:
       httpGet:
         host: 127.0.0.1

@@ -5,37 +5,79 @@ import (
 	"github.com/jgensler8/kother/pkg/ignition/units"
 	"io/ioutil"
 	"strings"
+	"k8s.io/client-go/pkg/api/v1"
+	"github.com/jgensler8/kother/pkg/spec"
+)
+
+var (
+	Pod = v1.Pod{
+		ObjectMeta: v1.ObjectMeta{
+			Name: "apiserver",
+		},
+		Spec: v1.PodSpec{
+			Containers: []v1.Container{
+				v1.Container{
+					Name: "kube-apiserver",
+					Ports: []v1.ContainerPort{
+						v1.ContainerPort{
+							ContainerPort: 443,
+						},
+						v1.ContainerPort{
+							ContainerPort: 8080,
+						},
+					},
+				},
+			},
+		},
+	}
+	Spec = spec.Spec{
+		Config: spec.Config{
+			DNS: spec.DNS{
+				RootDomain: "vagrant.local",
+			},
+		},
+		Etcd: spec.Etcd{
+			Component: spec.Component{
+				Pod: &Pod,
+				Replicas: 2,
+			},
+		},
+		Vault: spec.Vault{
+			Component: spec.Component{
+				Pod: &Pod,
+				Replicas: 2,
+			},
+		},
+		APIServer: spec.APIServer{
+			Component: spec.Component{
+				Pod: &Pod,
+				Replicas: 2,
+			},
+		},
+		Scheduler: spec.Scheduler{
+			Component: spec.Component{
+				Pod: &Pod,
+				Replicas: 2,
+			},
+		},
+		ControllerManager: spec.ControllerManager{
+			Component: spec.Component{
+				Pod: &Pod,
+				Replicas: 2,
+			},
+		},
+	}
 )
 
 func TestDefaultUnit(t *testing.T) {
-	k := units.KubeletUnitBuilder.
-		Name("mykubelet").
-		HyperkubeImage("myimage").
-		HyperkubeTag("latest").
-		APIServerDNS("asdf").
-		ClusterDNS("qwer").
-		ClusterDomain("qwer").
-		ManifestPath("/usr/share/oem").
-		Build()
-
-	u := units.DefaultUnit(k)
+	u := units.DefaultUnit(&Spec)
 	if len(u.Lines) != 8 {
 		t.Fail()
 	}
 }
 
 func TestDefaultUnit_Serialize(t *testing.T) {
-	k := units.KubeletUnitBuilder.
-		Name("mykubelet").
-		HyperkubeImage("myimage").
-		HyperkubeTag("latest").
-		APIServerDNS("api.mydomain.com").
-		ClusterDNS("10.2.0.10").
-		ClusterDomain("mydomain.com").
-		ManifestPath("/usr/share/oem").
-		Build()
-
-	u := units.DefaultUnit(k)
+	u := units.DefaultUnit(&Spec)
 	r := u.Serialize()
 	doc, err := ioutil.ReadAll(r)
 	if err != nil {

@@ -1,31 +1,35 @@
 ---
-# Used for api-server, controller-manager, kubelet, sheduler, proxy
-HyperkubeImage: quay.io/coreos/hyperkube
-HyperkubeTag:   v1.5.2_coreos.2
+# Used for api-server, controller-manager, kubelet, sheduler, and proxy,
+Hyperkube:
+  Image: quay.io/coreos/hyperkube
+  Tag:   v1.5.2_coreos.2
 
-EtcdImage: quay.io/coreos/etcd
-EtcdTag:   latest
+Etcd:
+  Image: quay.io/coreos/etcd
+  Tag:   latest
+  Replicas: 1
 
-VaultIamge: vault
-VaultTag:   latest
+Vault:
+  Iamge: vault
+  Tag:   latest
 
-CIDR:
-  Cluster: 10.1.0.0/24
-  Pod:     10.2.0.0/24
-  Service: 10.3.0.0/24
-
-DNS:
-  RootDomain:        vagrant.local
-  ClusterDNSService: 10.3.0.10
-  KubernetesService: 10.3.0.1
-  # AWS Specific
-  HostedZoneID: myhostedzoneID
+Config:
+  CIDR:
+    Cluster: 10.1.0.0/24
+    Pod:     10.2.0.0/24
+    Service: 10.3.0.0/24
+  DNS:
+    RootDomain:        vagrant.local
+    ClusterDNSService: 10.3.0.10
+    KubernetesService: 10.3.0.1
+    # AWS Specific
+    HostedZoneID: myhostedzoneID
 
 # AWS Specific
-PrivateKey: my_public_key
-Tags:
-- Key:   mycommonID
-  Value: mycommonValue
-
-Subnets:
-- "subnet-123"
+AWS:
+  PrivateKey: name_of_aws_public_key
+  Tags:
+  - Key:   mycommonID
+    Value: mycommonValue
+  Subnets:
+  - "subnet-123"

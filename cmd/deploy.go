@@ -11,8 +11,8 @@ func DeployAWS(c *cli.Context) (err error) {
 	if (err != nil) {
 		return err
 	}
-	fmt.Printf("%v", s.Pods)
 	fmt.Printf("%v", c.GlobalString("commit-hash"))
+	fmt.Printf("%v", s)
 	return nil
 }
 
@@ -26,7 +26,8 @@ func DeployVagrantfile(c *cli.Context) (err error) {
 		fmt.Printf("Couldn't turn Spec into Vagrantfile")
 		return
 	}
-	fmt.Printf("%v: %v", s.Pods, v)
+	//fmt.Printf("%v", s)
+	fmt.Printf("%v", *v.Contents)
 
 	return nil
 }

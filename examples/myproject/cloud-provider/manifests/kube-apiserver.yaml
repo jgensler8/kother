@@ -7,16 +7,16 @@ spec:
   hostNetwork: true
   containers:
   - name: kube-apiserver
-    image: {{ .HyperkubeImage }}:{{ .HyperkubeTag }}
+    image: {{ .Hyperkube.Name }}:{{ .Hyperkube.Tag }}
     command:
     - /hyperkube
     - apiserver
     - --bind-address=0.0.0.0
-    - --etcd-servers=https://{{ .EtcdDNS }}:2379
+    - --etcd-servers=https://{{ .Config.DNS.EtcdDNS }}:2379
     - --allow-privileged=true
-    - --service-cluster-ip-range={{ .ServiceClusterIPRange }}
+    - --service-cluster-ip-range={{ .Config.CIDR.Service }}
     - --secure-port=443
-    - --advertise-address={{ .APIServerDNS }}
+    - --advertise-address={{ .Config.DNS.APIServerDNS }}
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota
     - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
     - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem

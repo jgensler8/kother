@@ -6,17 +6,21 @@ metadata:
 spec:
   containers:
   - name: kube-controller-manager
-    image: {{ .HyperkubeImage }}:{{ .HyperkubeTag }}
+    image: {{ .Hyperkube.Name }}:{{ .Hyperkube.Tag }}
     command:
     - /hyperkube
     - controller-manager
-    - --master=http://{{ .APIServerDNS }}:8080
+    - --master=http://{{ .Config.DNS.APIServerDNS }}:8080
     - --leader-elect=true
     - --service-account-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
     - --root-ca-file=/etc/kubernetes/ssl/ca.pem
     resources:
       requests:
         cpu: 200m
+    ports:
+    - containerPort: 10252
+      hostPort: 10252
+      name: https
     livenessProbe:
       httpGet:
         host: 127.0.0.1

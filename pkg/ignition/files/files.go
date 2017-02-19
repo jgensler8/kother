@@ -4,33 +4,39 @@ import (
 	"path"
 	"net/url"
 	"github.com/coreos/ignition/config/types"
-	"k8s.io/client-go/pkg/api/v1"
+	"github.com/jgensler8/kother/pkg/spec"
+	"github.com/emicklei/go-restful/log"
+	"encoding/base64"
+	"fmt"
+	"k8s.io/client-go/pkg/util/json"
 )
 
 var (
 	BasePath string = "/usr/share/oem"
 )
 
-func ManifestToFile(p v1.Pod) (_ *types.File, err error) {
-	u, err := url.Parse("data:text/plain;base64,b64filecontentswouldgohere")
+func ManifestToFile(c *spec.Component) (_ *types.File, err error) {
+	b, err := json.Marshal(c.Pod)
+	if err != nil {
+		log.Printf("Couldn't marshal component pod for Unit File")
+	}
+	u, err := url.Parse( fmt.Sprintf("data:text/plain;base64,%s", base64.StdEncoding.EncodeToString(b)) )
 	if err != nil {
 		return nil, err
 	}
 	return &types.File{
-		Node: types.Node{
-			Filesystem: "root",
-			Path: types.Path(path.Join(BasePath, p.Name)),
-			Mode: 0755,
-			User: types.NodeUser{
-				Id: 123,
-			},
-			Group: types.NodeGroup{
-				Id: 123,
-			},
+		Filesystem: "root",
+		Path: types.Path(path.Join(BasePath, c.Pod.Name)),
+		Mode: 0755,
+		User: types.FileUser{
+			Id: 123,
+		},
+		Group: types.FileGroup{
+			Id: 123,
 		},
 		Contents: types.FileContents{
 			Source: types.Url(*u),
-			Compression: types.Compression("gzip+base64"),
+			Compression: types.Compression(""),
 		},
 	}, err
 }

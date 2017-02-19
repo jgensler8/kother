@@ -1,0 +1,42 @@
+package: github.com/jgensler8/kother
+import:
+- package: github.com/aws/aws-sdk-go
+  version: v1.6.25
+  subpackages:
+  - aws
+  - service/autoscaling
+  - service/cloudformation
+  - service/elb
+  - service/route53
+- package: github.com/coreos/go-systemd
+  version: v14
+  subpackages:
+  - unit
+- package: github.com/coreos/ignition
+  version: v0.12.1
+  subpackages:
+  - config/types
+- package: github.com/ghodss/yaml
+- package: github.com/lann/builder
+- package: github.com/urfave/cli
+  version: v1.19.1
+- package: k8s.io/client-go
+  version: v2.0.0
+  subpackages:
+  - pkg/api/v1
+- package: github.com/godbus/dbus
+- package: github.com/gorilla/schema
+- package: github.com/mjibson/appstats
+- package: google.golang.org/appengine
+  subpackages:
+  - memcache
+  - datastore
+  - user
+- package: gopkg.in/vmihailenco/msgpack.v2
+- package: github.com/BurntSushi/toml
+- package: gopkg.in/urfave/cli.v1
+- package: golang.org/x/crypto
+  subpackages:
+  - ssh/terminal
+- package: github.com/Masterminds/sprig
+  version: 2.8.0

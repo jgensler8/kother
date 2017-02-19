@@ -7,8 +7,11 @@ spec:
   hostNetwork: true
   containers:
   - name: vault
-    image: {{ .VaultImage }}:{{ .VaultTag }}
-    command:
+    image: {{ .Vault.Name }}:{{ .Vault.Tag }}
+    ports:
+    - containerPort: 8081
+      hostPort: 8081
+      name: client
     livenessProbe:
       httpGet:
         host: 127.0.0.1
